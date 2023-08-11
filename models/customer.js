@@ -61,6 +61,9 @@ class Customer {
    * returns 404 "No such customer" error if no customer is found.
    */
 
+  // fn name and param name is a little misleading
+  // this is a searching fn, var name could be searchTerm or term..
+  // search, or searchCustomer better suited name for fn
   static async getByName(name) {
 
     const results = await db.query(
@@ -69,12 +72,15 @@ class Customer {
           last_name  AS "lastName"
       FROM customers
       WHERE
-          first_name ILIKE $1 OR
-          last_name ILIKE $1 OR
           CONCAT(first_name,' ', last_name) ILIKE $1`,
-      [name]
+      [`%${name}%`]
     );
 
+    // instead of throwing err => don't return anything, blank page
+    // throw alternate friendlier err
+    // 404 implies the get req we made does not exist
+    // searching in search bar not that specific; as user, you havent
+    // made err
     if (results.rows.length === 0) {
       const err = new Error(`No such customer: ${name}`);
       err.status = 404;
@@ -128,20 +134,22 @@ class Customer {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  static async topTen() {
+  // add docstring
+  // formatting: in SQL add an alias for 'count' to be explicit
+    // describe what's happening
+    // add limit statement to next line
+  static async getTopTen() {
     const results = await db.query(
       `SELECT
           c.id,
           c.first_name as "firstName",
           c.last_name as "lastName",
-          c.phone,
-          c.notes,
           count(c.id)
       FROM customers as c
           JOIN reservations as r
               ON c.id = r.customer_id
       GROUP BY c.id
-      ORDER BY count DESC LIMIT 10`,
+      ORDER BY count DESC, first_name, last_name LIMIT 10`,
     );
 
     return results.rows.map(c => new Customer(c));

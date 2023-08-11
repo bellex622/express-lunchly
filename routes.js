@@ -46,9 +46,19 @@ router.post("/add/", async function (req, res, next) {
   return res.redirect(`/${customer.id}/`);
 });
 
+/** Show list of top-ten customers. */
+
+router.get("/top-ten/", async function (req, res, next) {
+  // console.log("top-ten")
+  const customers = await Customer.getTopTen();
+
+  return res.render("customer_list.html", { customers });
+});
+
 /** Show a customer, given their ID. */
 
 router.get("/:id/", async function (req, res, next) {
+  // console.log("In /id id=", req.params.id);
   const customer = await Customer.get(req.params.id);
 
   const reservations = await customer.getReservations();
@@ -102,11 +112,6 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
   return res.redirect(`/${customerId}/`);
 });
 
-/** Show list of top-ten customers. */
-router.get("/top-ten/", async function (req, res, next) {
-  const customers = await Customer.topTen();
 
-  return res.render("customer_list.html", { customers });
-});
 
 module.exports = router;

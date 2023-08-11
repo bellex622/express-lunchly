@@ -41,7 +41,7 @@ class Reservation {
   }
 
   /**
-   * Save this reservation. Adds a new customer if they’re new,
+   * Save this reservation. Adds a new reservation if they’re new,
    * or updates the existing record if there are changes.
   */
 
@@ -66,8 +66,6 @@ class Reservation {
     }
   }
 }
-
-
 
 
 module.exports = Reservation;
