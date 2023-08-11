@@ -40,7 +40,10 @@ class Reservation {
     return results.rows.map(row => new Reservation(row));
   }
 
-  /** save this reservation.*/
+  /**
+   * Save this reservation. Adds a new customer if they’re new,
+   * or updates the existing record if there are changes.
+  */
 
   async save() {
     if (this.id === undefined) {

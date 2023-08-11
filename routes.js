@@ -14,9 +14,8 @@ const router = new express.Router();
 
 router.get("/", async function (req, res, next) {
   const name = req.query.search;
-  console.log("name", name);
-
   let customers;
+
   if (name) {
     customers = await Customer.getByName(name);
     console.log("customers are", customers);
@@ -25,9 +24,7 @@ router.get("/", async function (req, res, next) {
     customers = await Customer.all();
   }
 
-  // const customers = await Customer.all();
   return res.render("customer_list.html", { customers });
-
 });
 
 /** Form to add a new customer. */
@@ -103,6 +100,13 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
   await reservation.save();
 
   return res.redirect(`/${customerId}/`);
+});
+
+/** Show list of top-ten customers. */
+router.get("/top-ten/", async function (req, res, next) {
+  const customers = await Customer.topTen();
+
+  return res.render("customer_list.html", { customers });
 });
 
 module.exports = router;
